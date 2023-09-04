@@ -60,7 +60,8 @@ class InsurancePage {
         confirmPasswordInput: () => cy.get('#confirmpassword'),
         commentsInput: () => cy.get("#Comments"),
         sendBtn: () => cy.get('#sendemail'),
-        confirmationMessage: () => cy.get('.sweet-alert h2')
+        loading: () => cy.get('#LoadingPDF'),
+        confirmationMessage: () => cy.get('div.sweet-alert h2')
     };
   
     fillVehicleDataForm(vehicleData) {
@@ -81,14 +82,14 @@ class InsurancePage {
     }
 
     fillInsurantDataForm(insurantData) {
-        this.vehicleDataElements.firstNameInput().type(insurantData[0]);
-        this.vehicleDataElements.lastNameInput().type(insurantData[1]);
-        this.vehicleDataElements.birthDateInput().type(insurantData[2]);
-        this.vehicleDataElements.countryInput().select(insurantData[3]);
-        this.vehicleDataElements.zipCodeInput().type(insurantData[4]);
-        this.vehicleDataElements.occupationInput().select(insurantData[5]);
-        this.vehicleDataElements.otherOption().click();
-        this.vehicleDataElements.nextBtn().click();
+        this.insurantDataElements.firstNameInput().type(insurantData[0]);
+        this.insurantDataElements.lastNameInput().type(insurantData[1]);
+        this.insurantDataElements.birthDateInput().type(insurantData[2]);
+        this.insurantDataElements.countryInput().select(insurantData[3]);
+        this.insurantDataElements.zipCodeInput().type(insurantData[4]);
+        this.insurantDataElements.occupationInput().select(insurantData[5]);
+        this.insurantDataElements.otherOption().parent().click();
+        this.insurantDataElements.nextBtn().click();
     }
 
     fillProductDataForm(productData) {
@@ -96,13 +97,13 @@ class InsurancePage {
         this.productDataElements.insuranceSumInput().select(productData[0]);
         this.productDataElements.meritRatingInput().select(productData[1]);
         this.productDataElements.damageInsuranceInput().select(productData[2]);
-        this.productDataElements.euroProtectionOption().click();
+        this.productDataElements.euroProtectionOption().parent().click();
         this.productDataElements.courtesyCarInput().select(productData[3]);
         this.productDataElements.nextBtn().click();
     }
 
     fillPriceForm() {
-        this.priceOptionElements.ultimateOption().click();
+        this.priceOptionElements.ultimateOption().parent().click();
         this.priceOptionElements.nextBtn().click();
     }
 
@@ -115,6 +116,8 @@ class InsurancePage {
     }
 
     verifyMessage(message){
+        cy.intercept('http://sampleapp.tricentis.com/101/tcpdf/pdfs/quote.php').as('success')
+        cy.wait('@success', {timeout:20000})
         this.sendQuoteElements.confirmationMessage().should('have.text', message)
     }
   }
